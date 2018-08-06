@@ -22,5 +22,9 @@ func CreateBuilding(w http.ResponseWriter, r *http.Request) {
         panic(exception.NewHttpException(403, "Forbidden", nil))
     }
     data := utils.DecodeJsonRequest(r)
-    utils.SendJsonResponse(w, 201, manager.CreateBuilding(planet, data["name"].(string)))
+    building, err := manager.CreateBuilding(planet, data["name"].(string))
+    if err == nil {
+        utils.SendJsonResponse(w, 201, building)
+    }
+
 }

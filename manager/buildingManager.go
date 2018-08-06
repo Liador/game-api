@@ -68,7 +68,7 @@ func CreateBuilding(planet *model.Planet, name string) (model.Building, error) {
                 UpdatePlayerWallet(player, -int32(price.Amount))
                 UpdatePlayer(player)
             } else {
-                err = errors.New("not enough money to build")
+                err = errors.New("Not enough money to build")
             }
         }
     }
