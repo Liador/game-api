@@ -91,14 +91,14 @@ func CreateBuilding(planet *model.Planet, name string) (model.Building, error) {
         checkConstructionState(building.Id)
     })
     planet.AvailableBuildings = getAvailableBuildings(append(planet.Buildings, building))
-  
+
     return building, err
 }
 
 func createConstructionState(buildingPlan model.BuildingPlan) *model.ConstructionState {
     points := uint8(0)
     for _, price := range buildingPlan.Price {
-        if price.Type == price.PRICE_TYPE_POINTS {
+        if price.Type == model.PRICE_TYPE_POINTS {
             points = uint8(price.Amount)
         }
     }
