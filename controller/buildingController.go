@@ -25,6 +25,8 @@ func CreateBuilding(w http.ResponseWriter, r *http.Request) {
     building, err := manager.CreateBuilding(planet, data["name"].(string))
     if err == nil {
         utils.SendJsonResponse(w, 201, building)
+    } else {
+      panic(exception.NewHttpException(400, "Not enough money to build", nil))
     }
 
 }
