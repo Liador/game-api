@@ -4,6 +4,7 @@ import(
     "time"
     "encoding/json"
     "io/ioutil"
+    "errors"
     "kalaxia-game-api/database"
     "kalaxia-game-api/exception"
     "kalaxia-game-api/model"
@@ -53,10 +54,23 @@ func getAvailableBuildings(buildings []model.Building) []model.BuildingPlan {
     return availableBuildings
 }
 
-func CreateBuilding(planet *model.Planet, name string) model.Building {
+func CreateBuilding(planet *model.Planet, name string) (model.Building, error) {
+    err := errors.New("")
+    err = nil
     buildingPlan, isset := buildingPlansData[name]
     if !isset {
         panic(exception.NewHttpException(400, "unknown building plan", nil))
+    }
+    for _, price := range buildingPlan.Price {
+        if price.Type == model.PRICE_TYPE_MONEY {
+            player := GetPlayer(planet.PlayerId)
+            if player.Wallet >= price.Amount {
+                UpdatePlayerWallet(player, -int32(price.Amount))
+                UpdatePlayer(player)
+            } else {
+                err = errors.New("not enough money to build")
+            }
+        }
     }
     constructionState := createConstructionState(buildingPlan)
     building := model.Building{
@@ -77,13 +91,14 @@ func CreateBuilding(planet *model.Planet, name string) model.Building {
         checkConstructionState(building.Id)
     })
     planet.AvailableBuildings = getAvailableBuildings(append(planet.Buildings, building))
-    return building
+  
+    return building, err
 }
 
 func createConstructionState(buildingPlan model.BuildingPlan) *model.ConstructionState {
     points := uint8(0)
     for _, price := range buildingPlan.Price {
-        if price.Type == "points" {
+        if price.Type == price.PRICE_TYPE_POINTS {
             points = uint8(price.Amount)
         }
     }
