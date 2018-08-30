@@ -1,5 +1,9 @@
 package model
 
+import(
+    "time"
+)
+
 const PlanetTypeArtic = "arctic"
 const PlanetTypeDesert = "desert"
 const PlanetTypeOceanic = "oceanic"
@@ -56,6 +60,7 @@ type(
       Id uint16 `json:"-"`
       Capacity uint16 `json:"capacity"`
       Resources map[string]uint16 `json:"resources"`
+      FullAt map[string]time.Time `json:"Full_At"`
   }
   PlanetData struct {
     Resources map[string]uint8

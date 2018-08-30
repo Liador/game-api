@@ -7,6 +7,7 @@ import(
     "kalaxia-game-api/utils"
     "sync"
     "math"
+    "time"
 )
 
 func init() {
@@ -138,14 +139,19 @@ func addResourcesToStorage(planet model.Planet, storage *model.Storage) {
     for _, resource := range planet.Resources {
         var currentStock uint16
         var newStock uint16
+        var fullAt time.Time
+        var production uint16
         var isset bool
+        production = uint16(resource.Density)*10
         if currentStock, isset = storage.Resources[resource.Name]; !isset {
             currentStock = 0
         }
-        if newStock = currentStock + uint16(resource.Density) * 10; newStock > storage.Capacity {
+        if newStock = currentStock + production; newStock > storage.Capacity {
             newStock = storage.Capacity
+            fullAt = time.Now().Add(time.Hour * time.Duration((storage.Capacity - newStock)/production))
         }
         storage.Resources[resource.Name] = newStock
+        storage.FullAt[resource.Name] = fullAt
     }
 }
 
