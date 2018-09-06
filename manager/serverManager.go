@@ -9,7 +9,7 @@ import(
 func GetServerBySignature(signature string) *model.Server {
     server := model.Server{Signature: signature}
     if err := database.Connection.Model(&server).Where("signature = ?", signature).Select(); err != nil {
-        return nil
+        panic(exception.NewHttpException(404, "Server could not be found", err))
     }
     return &server
 }

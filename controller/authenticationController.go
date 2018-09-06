@@ -20,9 +20,6 @@ import (
 func Authenticate(w http.ResponseWriter, r *http.Request) {
     data := utils.DecodeJsonRequest(r)
     server := manager.GetServerBySignature(data["signature"].(string))
-    if server == nil {
-        panic(exception.NewHttpException(404, "Server not found", nil))
-    }
     player := manager.GetPlayerByUsername(data["username"].(string), server)
     if player == nil {
         player = manager.CreatePlayer(data["username"].(string), server)
